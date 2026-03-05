@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pro+ Edits — Premium Video Agency</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  
+  <!-- ✅ EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- ═══════════════════════════════════════════
+       NAVIGATION BAR
+  ═══════════════════════════════════════════ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#home" class="nav-logo">Aashishloop</a>
+      
+      <div class="nav-menu" id="navMenu">
+        <a href="#home" class="nav-link active">Home</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#shorts" class="nav-link">Short Videos</a>
+        <a href="#instagram" class="nav-link">Instagram Posters</a>
+        <a href="#long" class="nav-link">Long Videos</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </div>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       HERO SECTION
+  ═══════════════════════════════════════════ -->
+  <section class="hero" id="home">
+    <div class="hero-container">
+      
+      <h1 class="hero-headline">
+        <span class="line-1">Make every second</span>
+        <span class="line-2">count with <span class="pro-plus">Pro+</span> edits.</span>
+      </h1>
+
+      <p class="hero-description">
+        We edit videos that stop the scroll and convert. 
+        From <span class="highlight">short-form</span> reels to <span class="highlight">long-form</span> YouTube — 
+        every frame matters.
+      </p>
+
+      <div class="hero-cta">
+        <a href="#shorts" class="btn-primary">View Work</a>
+        <a href="#contact" class="btn-outlined">Get Started</a>
+      </div>
+
+      <div class="hero-video-wrapper">
+        <div class="hero-video-box">
+          <video class="hero-video" controls preload="auto" playsinline>
+            <source src="asset/ashishloop intro.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+
+      <div class="social-proof">
+        <div class="avatar-row">
+          <div class="avatar av-1"></div>
+          <div class="avatar av-2"></div>
+          <div class="avatar av-3"></div>
+          <div class="avatar av-4"></div>
+          <div class="avatar av-5"></div>
+        </div>
+        <span class="proof-text">100+ happy clients</span>
+      </div>
+
+    </div>
+
+    <div class="hero-bg-blur blur-1"></div>
+    <div class="hero-bg-blur blur-2"></div>
+    <div class="hero-bg-blur blur-3"></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       ABOUT SECTION
+  ═══════════════════════════════════════════ -->
+  <section class="about-section" id="about">
+    <div class="about-container">
+      
+      <div class="about-image-col">
+        <div class="about-image">
+          <img src="asset/freepik__man-in-clean-light-and-high-contract-orange-gradie__78297 copy.png" alt="Aashish Kumar" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="about-text-col">
+        <h2 class="about-title">About the Editor</h2>
+        <p class="about-text">
+          Hi, I'm <strong>Aashish Kumar</strong> — a professional video editor specializing in 
+          high-converting social media content. From viral short-form reels to cinematic long-form 
+          storytelling, I craft edits that capture attention and drive results.
+        </p>
+        <p class="about-text">
+          With a focus on creative storytelling and data-driven editing techniques, 
+          every project is designed to maximize retention and engagement. 
+          Let's turn your vision into scroll-stopping content.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SHORT VIDEOS SECTION
+  ═══════════════════════════════════════════ -->
+  <section class="shorts-section" id="shorts">
+    <div class="section-container">
+      
+      <div class="section-header">
+        <h2 class="section-title">Short <span class="accent">Videos</span></h2>
+      </div>
+
+      <div class="filter-controls">
+        <button class="filter-btn active" data-filter="all">project</button>
+        <!-- <button class="filter-btn" data-filter="reels">AI</button>
+        <button class="filter-btn" data-filter="ads">Travels</button>
+        <button class="filter-btn" data-filter="cinematic">Tutorials</button> -->
+      </div>
+
+      <div class="shorts-grid">
+
+        <div class="video-card" data-category="reels"><div class="video-wrap">
+          <video preload="metadata" playsinline><source src="asset/CAPTION edit (AshishLoop)-.mp4" type="video/mp4" /></video>
+          <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
+        </div></div>
+
+        <div class="video-card" data-category="cinematic"><div class="video-wrap">
+          <video preload="metadata" playsinline><source src="asset/Deep in southern Egypt and northern Sudan_ the Nubian villages offer a unique blend of ancient traditions and stunning landscapes. The Nubians_ one of the _1.mp4" type="video/mp4" /></video>
+          <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
+        </div></div>
+
+        <div class="video-card" data-category="reels"><div class="video-wrap">
+          <video preload="metadata" playsinline><source src="asset/kv 1.mp4" type="video/mp4" /></video>
+          <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
+        </div></div>
+
+        <div class="video-card" data-category="ads"><div class="video-wrap">
+          <video preload="metadata" playsinline><source src="asset/Ashishxsoon.mp4" type="video/mp4" /></video>
+          <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
+        </div></div>
+
+        <div class="video-card" data-category="reels"><div class="video-wrap">
+          <video preload="metadata" playsinline><source src="asset/luma ai v2.mp4" type="video/mp4" /></video>
+          <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
+        </div></div>
+
+        <div class="video-card" data-category="cinematic"><div class="video-wrap">
+          <video preload="metadata" playsinline><source src="asset/Connect Machine.mp4" type="video/mp4" /></video>
+          <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
+        </div></div>
+
+        <div class="video-card" data-category="ads"><div class="video-wrap">
+          <video preload="metadata" playsinline><source src="asset/Deep in southern Egypt and northern Sudan_ the Nubian villages offer a unique blend of ancient traditions and stunning landscapes. The Nubians_ one of the _1.mp4" type="video/mp4" /></video>
+          <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
+        </div></div>
+
+        <div class="video-card" data-category="reels"><div class="video-wrap">
+          <video preload="metadata" playsinline><source src="asset/KEyFrames.mp4" type="video/mp4" /></video>
+          <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
+        </div></div>
+
+        <div class="video-card" data-category="cinematic"><div class="video-wrap">
+          <video preload="metadata" playsinline><source src="asset/KV v3.mp4" type="video/mp4" /></video>
+          <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
+        </div></div>
+
+        <div class="video-card" data-category="ads"><div class="video-wrap">
+          <video preload="metadata" playsinline><source src="asset/.mp4" type="video/mp4" /></video>
+          <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
+        </div></div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       INSTAGRAM POSTERS SECTION
+  ═══════════════════════════════════════════ -->
+  <section class="instagram-section" id="instagram">
+    <div class="section-container">
+      
+      <div class="section-header">
+        <span class="section-tag">Design</span>
+        <h2 class="section-title">Instagram <span class="accent">Posters</span></h2>
+      </div>
+
+      <div class="instagram-grid">
+
+        <div class="poster-card">
+          <img src="asset/Thumbnail (Adobe).png" alt="Adobe" loading="lazy" />
+          <div class="poster-glow"></div>
+        </div>
+
+        <div class="poster-card">
+          <img src="asset/Thumbnail (Artlist).png" alt="Artlist" loading="lazy" />
+          <div class="poster-glow"></div>
+        </div>
+
+        <div class="poster-card">
+          <img src="asset/Thumbnail (Emergent).png" alt="Emergent" loading="lazy" />
+          <div class="poster-glow"></div>
+        </div>
+
+        <div class="poster-card">
+          <img src="asset/Thumbnail (imagineart).png" alt="Imagineart" loading="lazy" />
+          <div class="poster-glow"></div>
+        </div>
+
+        <div class="poster-card">
+          <img src="asset/img2.png" alt="Design" loading="lazy" />
+          <div class="poster-glow"></div>
+        </div>
+
+        <div class="poster-card">
+          <img src="asset/aashishmodel.png" alt="Model" loading="lazy" />
+          <div class="poster-glow"></div>
+        </div>
+
+        <div class="poster-card">
+          <img src="asset/Thumbnail (Adobe).png" alt="Adobe" loading="lazy" />
+          <div class="poster-glow"></div>
+        </div>
+
+        <div class="poster-card">
+          <img src="asset/Thumbnail (Artlist).png" alt="Artlist" loading="lazy" />
+          <div class="poster-glow"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       LONG VIDEOS SECTION
+  ═══════════════════════════════════════════ -->
+  <section class="long-section" id="long">
+    <div class="section-container">
+      
+      <div class="section-header">
+        <span class="section-tag">Cinematic</span>
+        <h2 class="section-title">Long <span class="accent">Videos</span></h2>
+      </div>
+
+      <div class="long-grid">
+        
+        <div class="long-card">
+          <div class="long-wrap">
+            <video preload="metadata" playsinline>
+              <source src="asset/POrtfolio.mp4" type="video/mp4" />
+            </video>
+            <div class="play-overlay dark">
+              <div class="play-icon large"><i class="fa-solid fa-play"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="long-card">
+          <div class="long-wrap">
+            <video preload="metadata" playsinline>
+              <source src="asset/YTDown.com_YouTube_How-to-USE-conflicts-to-get-closer-to-yo_Media_J10kNh48luo_002_720p.mp4" type="video/mp4" />
+            </video>
+            <div class="play-overlay dark">
+              <div class="play-icon large"><i class="fa-solid fa-play"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="long-card">
+          <div class="long-wrap">
+            <video preload="metadata" playsinline>
+              <source src="asset/YTDown.com_YouTube_What-you-missed-Artlist-NYC-event-highli_Media_g3QZNrsVal0_002_720p.mp4" type="video/mp4" />
+            </video>
+            <div class="play-overlay dark">
+              <div class="play-icon large"><i class="fa-solid fa-play"></i></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       CONTACT SECTION
+       Primary:  EmailJS  →  workwithashishloop@gmail.com
+       Fallback: Netlify Forms (zero-config on Netlify hosting)
+  ═══════════════════════════════════════════ -->
+ <!-- ═══════════════════════════════════════════
+     VIDEO TYPE PICKER SECTION
+     Add this BEFORE the contact section
+═══════════════════════════════════════════ -->
+<section class="picker-section" id="hire">
+  <div class="picker-container">
+
+    <div class="picker-header">
+      <span class="picker-eyebrow">Work With Me</span>
+      <h2 class="picker-title">What Do You Want<br /><span class="picker-highlight">Edited?</span></h2>
+      <p class="picker-sub">Select your content type — I'll craft it to convert, engage & grow your audience.</p>
+    </div>
+
+    <div class="picker-grid">
+
+      <div class="picker-card" data-type="short">
+        <div class="picker-icon-wrap">
+          <i class="fa-brands fa-tiktok"></i>
+        </div>
+        <div class="picker-info">
+          <h3>Short Form</h3>
+          <p>Reels, TikToks & YouTube Shorts — hook in 3 seconds, retain till the end</p>
+        </div>
+        <div class="picker-tags">
+          <span>Reels</span><span>TikTok</span><span>Shorts</span>
+        </div>
+        <div class="picker-cta-row">
+          <a href="https://wa.me/7857929633?text=Hi%20Aashish!%20%F0%9F%91%8B%20I%20want%20to%20get%20my%20Short%20Form%20videos%20edited%20(Reels%2FTikTok%2FShorts).%20Let%27s%20talk!" target="_blank" class="picker-btn">Get Started →</a>
+        </div>
+        <div class="picker-glow"></div>
+      </div>
+
+      <div class="picker-card featured" data-type="long">
+        <div class="picker-badge">Most Popular</div>
+        <div class="picker-icon-wrap">
+          <i class="fa-brands fa-youtube"></i>
+        </div>
+        <div class="picker-info">
+          <h3>Long Form</h3>
+          <p>YouTube videos with cinematic cuts, pacing & storytelling that keeps viewers watching</p>
+        </div>
+        <div class="picker-tags">
+          <span>YouTube</span><span>Documentary</span><span>Vlog</span>
+        </div>
+        <div class="picker-cta-row">
+          <a href="https://wa.me/7857929633?text=Hi%20Aashish!%20%F0%9F%91%8B%20I%20want%20to%20get%20my%20Long%20Form%20YouTube%20videos%20edited.%20Let%27s%20talk!" target="_blank" class="picker-btn">Get Started →</a>
+        </div>
+        <div class="picker-glow"></div>
+      </div>
+
+      <div class="picker-card" data-type="instagram">
+        <div class="picker-icon-wrap">
+          <i class="fa-brands fa-instagram"></i>
+        </div>
+        <div class="picker-info">
+          <h3>Instagram</h3>
+          <p>Feed videos, Carousels & Stories designed to stop the scroll and build brand</p>
+        </div>
+        <div class="picker-tags">
+          <span>Feed</span><span>Stories</span><span>Carousels</span>
+        </div>
+        <div class="picker-cta-row">
+          <a href="https://wa.me/7857929633?text=Hi%20Aashish!%20%F0%9F%91%8B%20I%20want%20to%20get%20my%20Instagram%20content%20edited.%20Let%27s%20talk!" target="_blank" class="picker-btn">Get Started →</a>
+        </div>
+        <div class="picker-glow"></div>
+      </div>
+
+      <div class="picker-card" data-type="podcast">
+        <div class="picker-icon-wrap">
+          <i class="fa-solid fa-film"></i>
+        </div>
+        <div class="picker-info">
+          <h3>Podcast / Ad</h3>
+          <p>Podcast clips, brand ads & promos cut for maximum impact & shareability</p>
+        </div>
+        <div class="picker-tags">
+          <span>Podcast</span><span>Ads</span><span>Promo</span>
+        </div>
+        <div class="picker-cta-row">
+          <a href="https://wa.me/7857929633?text=Hi%20Aashish!%20%F0%9F%91%8B%20I%20want%20to%20get%20my%20Podcast%2FAd%20content%20edited.%20Let%27s%20talk!" target="_blank" class="picker-btn">Get Started →</a>
+        </div>
+        <div class="picker-glow"></div>
+      </div>
+
+    </div>
+
+  </div>
+  <div class="picker-bg-orb orb-1"></div>
+  <div class="picker-bg-orb orb-2"></div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     CONTACT SECTION — Updated Layout
+═══════════════════════════════════════════ -->
+<section class="contact-section" id="contact">
+  <div class="contact-container">
+
+    <div class="contact-left">
+      <span class="contact-eyebrow">Let's Connect</span>
+      <h2 class="contact-title">
+        Let's Create<br />Something That<br /><span class="converts">Converts.</span>
+      </h2>
+      <p class="contact-desc">Got a project in mind? Fill the form or reach out directly — I respond within 24 hours.</p>
+
+      <!-- Social icons — vertical stack on left -->
+      <div class="social-icons-col">
+
+        <a href="https://www.instagram.com/aashishloop" target="_blank" rel="noopener" class="social-icon-card instagram">
+          <div class="icon-wrapper"><i class="fa-brands fa-instagram"></i></div>
+          <span class="icon-label">Instagram</span>
+        </a>
+
+        <a href="https://www.facebook.com/yourpage" target="_blank" rel="noopener" class="social-icon-card facebook">
+          <div class="icon-wrapper"><i class="fa-brands fa-facebook-f"></i></div>
+          <span class="icon-label">Facebook</span>
+        </a>
+
+        <a href="https://wa.me/7857929633?text=Welcome%20to%20AashishLoop!%20%F0%9F%8E%AC%0AWhat%20kind%20of%20video%20do%20you%20want%20to%20edit%3F%0A%E2%96%AA%20Short%20Form%20(Reels%2FTikTok%2FShorts)%0A%E2%96%AA%20Long%20Form%20(YouTube)%0A%E2%96%AA%20Instagram%20Content%0A%E2%96%AA%20Podcast%20%2F%20Ad" target="_blank" rel="noopener" class="social-icon-card whatsapp">
+          <div class="icon-wrapper"><i class="fa-brands fa-whatsapp"></i></div>
+          <span class="icon-label">WhatsApp</span>
+        </a>
+
+        <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener" class="social-icon-card linkedin">
+          <div class="icon-wrapper"><i class="fa-brands fa-linkedin-in"></i></div>
+          <span class="icon-label">LinkedIn</span>
+        </a>
+
+        <a href="https://mail.google.com/mail/?view=cm&to=workwithashishloop@gmail.com" target="_blank" rel="noopener" class="social-icon-card email">
+          <div class="icon-wrapper"><i class="fa-solid fa-envelope"></i></div>
+          <span class="icon-label">Email</span>
+        </a>
+
+      </div>
+    </div>
+
+    <div class="contact-right">
+      <div class="contact-form-wrapper">
+
+        <form
+          class="contact-form"
+          id="contactForm"
+          name="contact"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          novalidate
+        >
+          <input type="hidden" name="form-name" value="contact" />
+
+          <p class="hidden-honeypot" aria-hidden="true">
+            <label><input name="bot-field" /></label>
+          </p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <input type="text" id="name" name="name" placeholder="Your Name" required autocomplete="name" />
+              <span class="input-line"></span>
+            </div>
+            <div class="form-group">
+              <input type="email" id="email" name="email" placeholder="Your Email" required autocomplete="email" />
+              <span class="input-line"></span>
+            </div>
+          </div>
+
+          <!-- Video type select inside form -->
+          <div class="form-group">
+            <select id="videoType" name="videoType" class="form-select">
+              <option value="" disabled selected>What type of video? (optional)</option>
+              <option value="short">Short Form — Reels / TikTok / Shorts</option>
+              <option value="long">Long Form — YouTube</option>
+              <option value="instagram">Instagram Content</option>
+              <option value="podcast">Podcast / Ad / Promo</option>
+            </select>
+            <span class="input-line"></span>
+          </div>
+
+          <div class="form-group">
+            <textarea id="message" name="message" rows="4" placeholder="Tell me about your project..." required></textarea>
+            <span class="input-line"></span>
+          </div>
+
+          <button type="submit" class="form-submit" id="formSubmitBtn">
+            <span class="btn-text">Send Message</span>
+            <span class="btn-loader"></span>
+          </button>
+
+        </form>
+
+        <div class="form-toast success" id="toastSuccess" aria-live="polite">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Message sent! I'll get back to you soon.</span>
+        </div>
+        <div class="form-toast error" id="toastError" aria-live="polite">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span>Something went wrong. Please try again or email me directly.</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="contact-bg-gradient grad-1"></div>
+  <div class="contact-bg-gradient grad-2"></div>
+  <div class="contact-bg-gradient grad-3"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     VIDEO MODAL
+═══════════════════════════════════════════ -->
+<div class="video-modal" id="videoModal">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <button class="modal-close" id="modalClose">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="modal-video-wrap">
+      <video id="modalVideo" controls playsinline></video>
+    </div>
+  </div>
+</div>
+  <!-- JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
