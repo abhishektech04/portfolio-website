@@ -1,0 +1,5 @@
+.DS_Store
+asset/*.mp4
+asset/*.MP4
+asset/
+*.mp4
