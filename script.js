@@ -3,27 +3,17 @@
 const $  = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 
-/* ════════════════════════════════════════════════════════
-   CONFIG
-════════════════════════════════════════════════════════ */
 const CDN            = 'https://Aashishloop.b-cdn.net/Aashishloop/asset';
 const EMAILJS_SVC    = 'service_ozpzz2g';
 const EMAILJS_TPL    = 'template_0z73lc9';
 const EMAILJS_PUBKEY = 'sGzb8PkOTicnGEIz2';
 
-/* ── Init EmailJS as soon as the SDK tag has executed ── */
 (function tryInitEmailJS() {
   if (typeof emailjs !== 'undefined') {
     emailjs.init({ publicKey: EMAILJS_PUBKEY });
-    console.log('%c✉ EmailJS initialised', 'color:#ff8c42;font-weight:700');
   } else {
     window.addEventListener('load', () => {
-      if (typeof emailjs !== 'undefined') {
-        emailjs.init({ publicKey: EMAILJS_PUBKEY });
-        console.log('%c✉ EmailJS initialised (deferred)', 'color:#ff8c42;font-weight:700');
-      } else {
-        console.error('[EmailJS] SDK failed to load — check the <script> tag in <head>');
-      }
+      if (typeof emailjs !== 'undefined') emailjs.init({ publicKey: EMAILJS_PUBKEY });
     });
   }
 })();
@@ -34,12 +24,22 @@ const EMAILJS_PUBKEY = 'sGzb8PkOTicnGEIz2';
 const ProgressModule = (() => {
   const bar = $('#scrollProgress');
   if (!bar) return { init: () => {} };
+  let ticking = false;
   const upd = () => {
     const s = window.scrollY;
     const t = document.documentElement.scrollHeight - window.innerHeight;
     bar.style.width = (t > 0 ? (s / t) * 100 : 0) + '%';
+    ticking = false;
   };
-  return { init() { window.addEventListener('scroll', upd, { passive: true }); upd(); } };
+  return {
+    init() {
+      window.addEventListener('scroll', () => {
+        /* FIX: requestAnimationFrame throttle — don't run on every scroll pixel */
+        if (!ticking) { requestAnimationFrame(upd); ticking = true; }
+      }, { passive: true });
+      upd();
+    }
+  };
 })();
 
 /* ════════════════════════════════════════════════════════
@@ -66,11 +66,18 @@ const NavbarModule = (() => {
     document.body.style.overflow = '';
   }
 
+  let navTicking = false;
   return {
     init() {
       window.addEventListener('scroll', () => {
-        nav.classList.toggle('scrolled', window.scrollY > 40);
-        updateActive();
+        if (!navTicking) {
+          requestAnimationFrame(() => {
+            nav.classList.toggle('scrolled', window.scrollY > 40);
+            updateActive();
+            navTicking = false;
+          });
+          navTicking = true;
+        }
       }, { passive: true });
 
       toggle?.addEventListener('click', () => {
@@ -102,26 +109,74 @@ const RevealModule = (() => {
       en.target.style.transform = 'translateY(0)';
       obs.unobserve(en.target);
     });
-  }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+  /* FIX: higher threshold + bigger rootMargin = cards only animate when actually visible */
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
   function prep(el, i, delay) {
     el.style.opacity    = '0';
     el.style.transform  = 'translateY(40px)';
-    el.style.transition = `opacity 0.5s ease ${i * delay}ms, transform 0.5s ease ${i * delay}ms`;
+    el.style.transition = `opacity 0.45s ease ${i * delay}ms, transform 0.45s ease ${i * delay}ms`;
     obs.observe(el);
   }
 
   return {
     init() {
-      $$('.video-card').forEach((c, i)  => prep(c, i, 60));
-      $$('.poster-card').forEach((c, i) => prep(c, i, 70));
-      $$('.long-card').forEach((c, i)   => prep(c, i, 90));
+      $$('.video-card').forEach((c, i)  => prep(c, i, 50));
+      $$('.poster-card').forEach((c, i) => prep(c, i, 60));
+      $$('.long-card').forEach((c, i)   => prep(c, i, 80));
     }
   };
 })();
 
 /* ════════════════════════════════════════════════════════
-   4. VIDEO FILTER
+   4. LAZY VIDEO LOADER  ← THE MAIN FIX FOR LAG
+   Videos do NOT load until they scroll into view.
+   Only the src is inserted when the card enters viewport.
+════════════════════════════════════════════════════════ */
+const LazyVideoModule = (() => {
+
+  /* FIX: Only load video when card enters viewport + 200px buffer */
+  const videoObs = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      const video = en.target.querySelector('video');
+      if (!video || video.dataset.loaded) return;
+
+      const source = video.querySelector('source');
+      if (source && source.dataset.src) {
+        source.src = source.dataset.src;   /* swap data-src → src */
+        video.load();
+        video.dataset.loaded = 'true';
+      }
+      videoObs.unobserve(en.target);
+    });
+  }, {
+    rootMargin: '200px 0px',   /* start loading 200px before entering screen */
+    threshold: 0
+  });
+
+  return {
+    init() {
+      /* Convert all short + long video cards to lazy */
+      $$('.video-card, .long-card').forEach(card => {
+        const video  = card.querySelector('video');
+        const source = video?.querySelector('source');
+        if (!source) return;
+
+        /* Move src → data-src so browser won't auto-load */
+        if (source.getAttribute('src') && !source.dataset.src) {
+          source.dataset.src = source.getAttribute('src');
+          source.removeAttribute('src');
+        }
+
+        videoObs.observe(card);
+      });
+    }
+  };
+})();
+
+/* ════════════════════════════════════════════════════════
+   5. VIDEO FILTER
 ════════════════════════════════════════════════════════ */
 const FilterModule = (() => {
   const btns  = $$('.filter-btn');
@@ -131,9 +186,9 @@ const FilterModule = (() => {
   function apply(cat) {
     cards.forEach(c => {
       const show = cat === 'all' || c.dataset.category === cat;
-      c.style.transition    = 'opacity 0.3s ease, transform 0.3s ease';
+      c.style.transition    = 'opacity 0.25s ease, transform 0.25s ease';
       c.style.opacity       = show ? '1' : '0';
-      c.style.transform     = show ? 'scale(1)' : 'scale(0.94)';
+      c.style.transform     = show ? 'translateY(0)' : 'scale(0.95)';
       c.style.pointerEvents = show ? '' : 'none';
       c.classList.toggle('filter-hidden', !show);
     });
@@ -151,10 +206,7 @@ const FilterModule = (() => {
 })();
 
 /* ════════════════════════════════════════════════════════
-   5. VIDEO MODAL
-   getSrc() reads the <source src="..."> attribute directly —
-   getAttribute() always returns exactly what's in the HTML,
-   never a browser-resolved blob or wrong absolute path.
+   6. VIDEO MODAL
 ════════════════════════════════════════════════════════ */
 const VideoModal = (() => {
   const modal    = $('#videoModal');
@@ -166,11 +218,9 @@ const VideoModal = (() => {
   function getSrc(card) {
     const vid = card.querySelector('video');
     if (vid) {
-      // getAttribute gives the raw string exactly as written in the HTML
-      const src = vid.querySelector('source')?.getAttribute('src')
-                  || vid.getAttribute('src')
-                  || '';
-      // Safety: if somehow a bare filename got through, prepend CDN
+      /* Check data-src first (lazy), then src */
+      const source = vid.querySelector('source');
+      const src = source?.dataset.src || source?.getAttribute('src') || vid.getAttribute('src') || '';
       if (src && !src.startsWith('http') && !src.startsWith('blob')) {
         return CDN + '/' + src.replace(/^\/+/, '');
       }
@@ -180,18 +230,15 @@ const VideoModal = (() => {
   }
 
   function open(src) {
-    if (!src) { console.warn('[Modal] No src found on card'); return; }
-    console.log('[Modal] Opening:', src);
-
+    if (!src) return;
     videoEl.src = src;
     videoEl.load();
-
     modal.style.display = 'flex';
-    modal.offsetHeight;                    // force reflow — makes CSS transition fire
+    modal.offsetHeight;
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-
-    setTimeout(() => videoEl.play().catch(() => {}), 350);
+    /* FIX: longer delay — give browser time to buffer before playing */
+    setTimeout(() => videoEl.play().catch(() => {}), 400);
   }
 
   function close() {
@@ -199,7 +246,7 @@ const VideoModal = (() => {
     videoEl.pause();
     videoEl.currentTime = 0;
     document.body.style.overflow = '';
-    setTimeout(() => { modal.style.display = 'none'; videoEl.src = ''; }, 400);
+    setTimeout(() => { modal.style.display = 'none'; videoEl.src = ''; }, 380);
   }
 
   return {
@@ -208,7 +255,6 @@ const VideoModal = (() => {
         card.style.cursor = 'pointer';
         card.addEventListener('click', () => open(getSrc(card)));
       });
-
       closeBtn?.addEventListener('click', close);
       backdrop?.addEventListener('click', close);
       document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
@@ -217,13 +263,7 @@ const VideoModal = (() => {
 })();
 
 /* ════════════════════════════════════════════════════════
-   6. CONTACT FORM  — EmailJS v4
-   Template variables used:
-     {{from_name}}   — sender's name
-     {{from_email}}  — sender's email
-     {{video_type}}  — dropdown selection
-     {{message}}     — message body
-     {{reply_to}}    — set as Reply-To in EmailJS template
+   7. CONTACT FORM
 ════════════════════════════════════════════════════════ */
 const FormModule = (() => {
   const form      = $('#contactForm');
@@ -232,29 +272,25 @@ const FormModule = (() => {
   const toastErr  = $('#toastError');
   if (!form) return { init: () => {} };
 
-  /* Loading state */
   function setLoading(on) {
     submitBtn?.classList.toggle('loading', on);
     if (submitBtn) submitBtn.disabled = on;
   }
 
-  /* Toast notification */
   function showToast(el, ms = 4000) {
     if (!el) return;
     el.classList.add('visible');
     setTimeout(() => el.classList.remove('visible'), ms);
   }
 
-  /* Validation */
   function validate() {
     const name  = form.elements['name']?.value?.trim()    || '';
     const email = form.elements['email']?.value?.trim()   || '';
     const msg   = form.elements['message']?.value?.trim() || '';
     const rx    = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!name)          { shake(form.elements['name'],    'Please enter your name');     return false; }
-    if (!rx.test(email)){ shake(form.elements['email'],   'Please enter a valid email'); return false; }
-    if (!msg)           { shake(form.elements['message'], 'Please write a message');     return false; }
+    if (!name)           { shake(form.elements['name'],    'Please enter your name');     return false; }
+    if (!rx.test(email)) { shake(form.elements['email'],   'Please enter a valid email'); return false; }
+    if (!msg)            { shake(form.elements['message'], 'Please write a message');     return false; }
     return true;
   }
 
@@ -270,28 +306,19 @@ const FormModule = (() => {
     }, { once: true });
   }
 
-  /* EmailJS send */
   async function sendEmail() {
     if (typeof emailjs === 'undefined') throw new Error('EmailJS not loaded');
-
     const params = {
-      from_name:  form.elements['name']?.value?.trim()      || '',
-      from_email: form.elements['email']?.value?.trim()     || '',
-      video_type: form.elements['videoType']?.value         || 'Not specified',
-      message:    form.elements['message']?.value?.trim()   || '',
-      reply_to:   form.elements['email']?.value?.trim()     || '',
+      from_name:  form.elements['name']?.value?.trim()    || '',
+      from_email: form.elements['email']?.value?.trim()   || '',
+      video_type: form.elements['videoType']?.value       || 'Not specified',
+      message:    form.elements['message']?.value?.trim() || '',
+      reply_to:   form.elements['email']?.value?.trim()   || '',
     };
-
-    console.log('[EmailJS] Sending with params:', params);
-
     const res = await emailjs.send(EMAILJS_SVC, EMAILJS_TPL, params, EMAILJS_PUBKEY);
-
-    console.log('[EmailJS] Response:', res);
-
-    if (res.status !== 200) throw new Error('Status ' + res.status + ': ' + res.text);
+    if (res.status !== 200) throw new Error('Status ' + res.status);
   }
 
-  /* Netlify Forms fallback */
   async function netlifyFallback() {
     const data = new URLSearchParams({
       'form-name': 'contact',
@@ -300,11 +327,11 @@ const FormModule = (() => {
       message: form.elements['message']?.value?.trim() || '',
     });
     const res = await fetch('/', {
-      method:  'POST',
+      method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body:    data.toString(),
+      body: data.toString(),
     });
-    if (!res.ok) throw new Error('Netlify fallback ' + res.status);
+    if (!res.ok) throw new Error('Netlify ' + res.status);
   }
 
   function resetForm() {
@@ -317,35 +344,21 @@ const FormModule = (() => {
 
   return {
     init() {
-      /* Cache original placeholders */
       $$('#contactForm input, #contactForm textarea').forEach(el => {
         el.dataset.placeholder = el.placeholder;
       });
-
       form.addEventListener('submit', async e => {
         e.preventDefault();
         if (!validate()) return;
-
-        /* Honeypot bot guard */
         if (form.elements['bot-field']?.value) return;
-
         setLoading(true);
         let ok = false;
-
         try {
           await sendEmail();
           ok = true;
         } catch (err) {
-          console.warn('[EmailJS failed]', err.message);
-          /* Try Netlify fallback */
-          try {
-            await netlifyFallback();
-            ok = true;
-          } catch (err2) {
-            console.warn('[Netlify failed]', err2.message);
-          }
+          try { await netlifyFallback(); ok = true; } catch {}
         }
-
         setLoading(false);
         if (ok) { showToast(toastOk); resetForm(); }
         else      showToast(toastErr);
@@ -355,7 +368,7 @@ const FormModule = (() => {
 })();
 
 /* ════════════════════════════════════════════════════════
-   7. SMOOTH SCROLL
+   8. SMOOTH SCROLL
 ════════════════════════════════════════════════════════ */
 function initSmoothScroll() {
   $$('a[href^="#"]').forEach(a => {
@@ -374,12 +387,13 @@ function initSmoothScroll() {
 function init() {
   ProgressModule.init();
   NavbarModule.init();
+  /* FIX: LazyVideoModule BEFORE RevealModule — set up data-src first */
+  LazyVideoModule.init();
   RevealModule.init();
   FilterModule.init();
   VideoModal.init();
   FormModule.init();
   initSmoothScroll();
-  console.log('%c✦ AshishLoop — Ready', 'color:#ff7a00;font-weight:700;font-size:14px;');
 }
 
 if (document.readyState === 'loading') {
