@@ -1,16 +1,36 @@
 'use strict';
 
-/* ── utils ── */
 const $  = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 
-const EMAILJS_SERVICE_ID  = 'service_ozpzz2g';
-const EMAILJS_TEMPLATE_ID = 'template_0z73lc9';
-const EMAILJS_PUBLIC_KEY  = 'sGzb8PkOTicnGEIz2';
+/* ════════════════════════════════════════════════════════
+   CONFIG
+════════════════════════════════════════════════════════ */
+const CDN            = 'https://Aashishloop.b-cdn.net/Aashishloop/asset';
+const EMAILJS_SVC    = 'service_ozpzz2g';
+const EMAILJS_TPL    = 'template_0z73lc9';
+const EMAILJS_PUBKEY = 'sGzb8PkOTicnGEIz2';
 
-/* ================================================================
-   1. SCROLL PROGRESS BAR
-================================================================ */
+/* ── Init EmailJS as soon as the SDK tag has executed ── */
+(function tryInitEmailJS() {
+  if (typeof emailjs !== 'undefined') {
+    emailjs.init({ publicKey: EMAILJS_PUBKEY });
+    console.log('%c✉ EmailJS initialised', 'color:#ff8c42;font-weight:700');
+  } else {
+    window.addEventListener('load', () => {
+      if (typeof emailjs !== 'undefined') {
+        emailjs.init({ publicKey: EMAILJS_PUBKEY });
+        console.log('%c✉ EmailJS initialised (deferred)', 'color:#ff8c42;font-weight:700');
+      } else {
+        console.error('[EmailJS] SDK failed to load — check the <script> tag in <head>');
+      }
+    });
+  }
+})();
+
+/* ════════════════════════════════════════════════════════
+   1. SCROLL PROGRESS
+════════════════════════════════════════════════════════ */
 const ProgressModule = (() => {
   const bar = $('#scrollProgress');
   if (!bar) return { init: () => {} };
@@ -22,25 +42,28 @@ const ProgressModule = (() => {
   return { init() { window.addEventListener('scroll', upd, { passive: true }); upd(); } };
 })();
 
-/* ================================================================
-   2. NAVBAR — scroll shrink + mobile toggle
-================================================================ */
+/* ════════════════════════════════════════════════════════
+   2. NAVBAR
+════════════════════════════════════════════════════════ */
 const NavbarModule = (() => {
-  const nav    = $('#navbar');
-  const toggle = $('#navToggle');
-  const menu   = $('#navMenu');
-  const links  = $$('.nav-link');
+  const nav      = $('#navbar');
+  const toggle   = $('#navToggle');
+  const menu     = $('#navMenu');
+  const links    = $$('.nav-link');
   const sections = $$('section[id]');
   if (!nav) return { init: () => {} };
 
   function updateActive() {
-    const y = window.scrollY + 100;
+    const y = window.scrollY + 120;
     let cur = sections[0]?.id || '';
     sections.forEach(s => { if (y >= s.offsetTop) cur = s.id; });
-    links.forEach(l => {
-      const href = l.getAttribute('href');
-      l.classList.toggle('active', href === '#' + cur);
-    });
+    links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + cur));
+  }
+
+  function closeMenu() {
+    menu?.classList.remove('active');
+    toggle?.classList.remove('active');
+    document.body.style.overflow = '';
   }
 
   return {
@@ -56,20 +79,21 @@ const NavbarModule = (() => {
         document.body.style.overflow = open ? 'hidden' : '';
       });
 
-      links.forEach(l => l.addEventListener('click', () => {
-        menu.classList.remove('active');
-        toggle?.classList.remove('active');
-        document.body.style.overflow = '';
-      }));
+      links.forEach(l => l.addEventListener('click', closeMenu));
+      document.addEventListener('click', e => {
+        if (menu?.classList.contains('active') &&
+            !menu.contains(e.target) &&
+            !toggle?.contains(e.target)) closeMenu();
+      });
 
       updateActive();
     }
   };
 })();
 
-/* ================================================================
-   3. SCROLL REVEAL — fade-up cards when they enter viewport
-================================================================ */
+/* ════════════════════════════════════════════════════════
+   3. SCROLL REVEAL
+════════════════════════════════════════════════════════ */
 const RevealModule = (() => {
   const obs = new IntersectionObserver((entries) => {
     entries.forEach(en => {
@@ -78,29 +102,27 @@ const RevealModule = (() => {
       en.target.style.transform = 'translateY(0)';
       obs.unobserve(en.target);
     });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+  function prep(el, i, delay) {
+    el.style.opacity    = '0';
+    el.style.transform  = 'translateY(40px)';
+    el.style.transition = `opacity 0.5s ease ${i * delay}ms, transform 0.5s ease ${i * delay}ms`;
+    obs.observe(el);
+  }
 
   return {
     init() {
-      $$('.video-card').forEach((c, i) => {
-        c.style.transitionDelay = (i * 60) + 'ms';
-        obs.observe(c);
-      });
-      $$('.poster-card').forEach((c, i) => {
-        c.style.transitionDelay = (i * 70) + 'ms';
-        obs.observe(c);
-      });
-      $$('.long-card').forEach((c, i) => {
-        c.style.transitionDelay = (i * 90) + 'ms';
-        obs.observe(c);
-      });
+      $$('.video-card').forEach((c, i)  => prep(c, i, 60));
+      $$('.poster-card').forEach((c, i) => prep(c, i, 70));
+      $$('.long-card').forEach((c, i)   => prep(c, i, 90));
     }
   };
 })();
 
-/* ================================================================
-   4. VIDEO FILTER — filter short-form cards by category
-================================================================ */
+/* ════════════════════════════════════════════════════════
+   4. VIDEO FILTER
+════════════════════════════════════════════════════════ */
 const FilterModule = (() => {
   const btns  = $$('.filter-btn');
   const cards = $$('.video-card');
@@ -108,74 +130,83 @@ const FilterModule = (() => {
 
   function apply(cat) {
     cards.forEach(c => {
-      const match = cat === 'all' || c.dataset.category === cat;
-      if (match) {
-        c.classList.remove('filter-hidden');
-        requestAnimationFrame(() => c.classList.add('filter-show'));
-      } else {
-        c.classList.add('filter-hidden');
-        c.classList.remove('filter-show');
-      }
+      const show = cat === 'all' || c.dataset.category === cat;
+      c.style.transition    = 'opacity 0.3s ease, transform 0.3s ease';
+      c.style.opacity       = show ? '1' : '0';
+      c.style.transform     = show ? 'scale(1)' : 'scale(0.94)';
+      c.style.pointerEvents = show ? '' : 'none';
+      c.classList.toggle('filter-hidden', !show);
     });
   }
 
   return {
     init() {
-      btns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          btns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          apply(btn.dataset.filter || 'all');
-        });
-      });
+      btns.forEach(btn => btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        apply(btn.dataset.filter || 'all');
+      }));
     }
   };
 })();
 
-/* ================================================================
-   5. VIDEO MODAL — click any video card / long card to open modal
-================================================================ */
+/* ════════════════════════════════════════════════════════
+   5. VIDEO MODAL
+   getSrc() reads the <source src="..."> attribute directly —
+   getAttribute() always returns exactly what's in the HTML,
+   never a browser-resolved blob or wrong absolute path.
+════════════════════════════════════════════════════════ */
 const VideoModal = (() => {
   const modal    = $('#videoModal');
   const videoEl  = $('#modalVideo');
   const closeBtn = $('#modalClose');
-  const backdrop = modal ? $('.modal-backdrop', modal) : null;
+  const backdrop = $('#modalBackdrop');
   if (!modal || !videoEl) return { init: () => {} };
 
+  function getSrc(card) {
+    const vid = card.querySelector('video');
+    if (vid) {
+      // getAttribute gives the raw string exactly as written in the HTML
+      const src = vid.querySelector('source')?.getAttribute('src')
+                  || vid.getAttribute('src')
+                  || '';
+      // Safety: if somehow a bare filename got through, prepend CDN
+      if (src && !src.startsWith('http') && !src.startsWith('blob')) {
+        return CDN + '/' + src.replace(/^\/+/, '');
+      }
+      return src;
+    }
+    return card.dataset.src || '';
+  }
+
   function open(src) {
-    if (!src) return;
+    if (!src) { console.warn('[Modal] No src found on card'); return; }
+    console.log('[Modal] Opening:', src);
+
     videoEl.src = src;
     videoEl.load();
+
     modal.style.display = 'flex';
-    requestAnimationFrame(() => modal.classList.add('active'));
+    modal.offsetHeight;                    // force reflow — makes CSS transition fire
+    modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-    setTimeout(() => videoEl.play().catch(() => {}), 300);
+
+    setTimeout(() => videoEl.play().catch(() => {}), 350);
   }
 
   function close() {
     modal.classList.remove('active');
     videoEl.pause();
+    videoEl.currentTime = 0;
     document.body.style.overflow = '';
-    setTimeout(() => {
-      modal.style.display = 'none';
-      videoEl.src = '';
-    }, 400);
+    setTimeout(() => { modal.style.display = 'none'; videoEl.src = ''; }, 400);
   }
 
   return {
     init() {
-      $$('.video-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const src = card.querySelector('source')?.src || card.querySelector('video')?.src || '';
-          open(src);
-        });
-      });
-
-      $$('.long-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const src = card.querySelector('source')?.src || card.querySelector('video')?.src || '';
-          open(src);
-        });
+      $$('.video-card, .long-card').forEach(card => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', () => open(getSrc(card)));
       });
 
       closeBtn?.addEventListener('click', close);
@@ -185,9 +216,15 @@ const VideoModal = (() => {
   };
 })();
 
-/* ================================================================
-   6. CONTACT FORM — EmailJS primary / Netlify Forms fallback
-================================================================ */
+/* ════════════════════════════════════════════════════════
+   6. CONTACT FORM  — EmailJS v4
+   Template variables used:
+     {{from_name}}   — sender's name
+     {{from_email}}  — sender's email
+     {{video_type}}  — dropdown selection
+     {{message}}     — message body
+     {{reply_to}}    — set as Reply-To in EmailJS template
+════════════════════════════════════════════════════════ */
 const FormModule = (() => {
   const form      = $('#contactForm');
   const submitBtn = $('#formSubmitBtn');
@@ -195,65 +232,92 @@ const FormModule = (() => {
   const toastErr  = $('#toastError');
   if (!form) return { init: () => {} };
 
+  /* Loading state */
   function setLoading(on) {
     submitBtn?.classList.toggle('loading', on);
     if (submitBtn) submitBtn.disabled = on;
   }
 
-  function showToast(el, duration = 4000) {
+  /* Toast notification */
+  function showToast(el, ms = 4000) {
     if (!el) return;
     el.classList.add('visible');
-    setTimeout(() => el.classList.remove('visible'), duration);
+    setTimeout(() => el.classList.remove('visible'), ms);
   }
 
+  /* Validation */
   function validate() {
-    const name    = form.name.value.trim();
-    const email   = form.email.value.trim();
-    const message = form.message.value.trim();
-    const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const name  = form.elements['name']?.value?.trim()    || '';
+    const email = form.elements['email']?.value?.trim()   || '';
+    const msg   = form.elements['message']?.value?.trim() || '';
+    const rx    = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!name)             { shakeFocus(form.name,    'Please enter your name');    return false; }
-    if (!emailRx.test(email)) { shakeFocus(form.email,   'Please enter a valid email'); return false; }
-    if (!message)          { shakeFocus(form.message, 'Please write a message');    return false; }
+    if (!name)          { shake(form.elements['name'],    'Please enter your name');     return false; }
+    if (!rx.test(email)){ shake(form.elements['email'],   'Please enter a valid email'); return false; }
+    if (!msg)           { shake(form.elements['message'], 'Please write a message');     return false; }
     return true;
   }
 
-  function shakeFocus(el, msg) {
+  function shake(el, msg) {
+    if (!el) return;
     el.focus();
     el.classList.add('input-error');
-    el.setAttribute('placeholder', msg);
+    const orig = el.dataset.placeholder || el.placeholder;
+    el.placeholder = msg;
     el.addEventListener('input', () => {
       el.classList.remove('input-error');
-      el.setAttribute('placeholder', el.dataset.placeholder || '');
+      el.placeholder = orig;
     }, { once: true });
   }
 
+  /* EmailJS send */
+  async function sendEmail() {
+    if (typeof emailjs === 'undefined') throw new Error('EmailJS not loaded');
+
+    const params = {
+      from_name:  form.elements['name']?.value?.trim()      || '',
+      from_email: form.elements['email']?.value?.trim()     || '',
+      video_type: form.elements['videoType']?.value         || 'Not specified',
+      message:    form.elements['message']?.value?.trim()   || '',
+      reply_to:   form.elements['email']?.value?.trim()     || '',
+    };
+
+    console.log('[EmailJS] Sending with params:', params);
+
+    const res = await emailjs.send(EMAILJS_SVC, EMAILJS_TPL, params, EMAILJS_PUBKEY);
+
+    console.log('[EmailJS] Response:', res);
+
+    if (res.status !== 200) throw new Error('Status ' + res.status + ': ' + res.text);
+  }
+
+  /* Netlify Forms fallback */
   async function netlifyFallback() {
     const data = new URLSearchParams({
       'form-name': 'contact',
-      name:        form.name.value.trim(),
-      email:       form.email.value.trim(),
-      message:     form.message.message?.value?.trim() || form.message.value.trim(),
+      name:    form.elements['name']?.value?.trim()    || '',
+      email:   form.elements['email']?.value?.trim()   || '',
+      message: form.elements['message']?.value?.trim() || '',
     });
     const res = await fetch('/', {
       method:  'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body:    data.toString(),
     });
-    if (!res.ok) throw new Error('Netlify fallback failed: ' + res.status);
+    if (!res.ok) throw new Error('Netlify fallback ' + res.status);
   }
 
-  async function sendViaEmailJS() {
-    if (typeof emailjs === 'undefined') throw new Error('EmailJS SDK not loaded');
-    await emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, form, EMAILJS_PUBLIC_KEY);
+  function resetForm() {
+    form.reset();
+    $$('#contactForm input, #contactForm textarea').forEach(el => {
+      el.placeholder = el.dataset.placeholder || '';
+      el.classList.remove('input-error');
+    });
   }
 
   return {
     init() {
-      if (typeof emailjs !== 'undefined') {
-        emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-      }
-
+      /* Cache original placeholders */
       $$('#contactForm input, #contactForm textarea').forEach(el => {
         el.dataset.placeholder = el.placeholder;
       });
@@ -262,48 +326,37 @@ const FormModule = (() => {
         e.preventDefault();
         if (!validate()) return;
 
-        const bot = form.querySelector('[name="bot-field"]');
-        if (bot?.value) return;
+        /* Honeypot bot guard */
+        if (form.elements['bot-field']?.value) return;
 
         setLoading(true);
-
-        let emailjsOk = false;
+        let ok = false;
 
         try {
-          await sendViaEmailJS();
-          emailjsOk = true;
-        } catch (ejsErr) {
-          console.warn('[EmailJS]', ejsErr.message);
-        }
-
-        if (!emailjsOk) {
+          await sendEmail();
+          ok = true;
+        } catch (err) {
+          console.warn('[EmailJS failed]', err.message);
+          /* Try Netlify fallback */
           try {
             await netlifyFallback();
-            emailjsOk = true;
-          } catch (netErr) {
-            console.warn('[Netlify fallback]', netErr.message);
+            ok = true;
+          } catch (err2) {
+            console.warn('[Netlify failed]', err2.message);
           }
         }
 
         setLoading(false);
-
-        if (emailjsOk) {
-          showToast(toastOk);
-          form.reset();
-          $$('#contactForm input, #contactForm textarea').forEach(el => {
-            el.placeholder = el.dataset.placeholder || '';
-          });
-        } else {
-          showToast(toastErr);
-        }
+        if (ok) { showToast(toastOk); resetForm(); }
+        else      showToast(toastErr);
       });
     }
   };
 })();
 
-/* ================================================================
+/* ════════════════════════════════════════════════════════
    7. SMOOTH SCROLL
-================================================================ */
+════════════════════════════════════════════════════════ */
 function initSmoothScroll() {
   $$('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
@@ -315,9 +368,9 @@ function initSmoothScroll() {
   });
 }
 
-/* ================================================================
-   INIT
-================================================================ */
+/* ════════════════════════════════════════════════════════
+   BOOT
+════════════════════════════════════════════════════════ */
 function init() {
   ProgressModule.init();
   NavbarModule.init();
@@ -326,8 +379,7 @@ function init() {
   VideoModal.init();
   FormModule.init();
   initSmoothScroll();
-
-  console.log('%c✦ AshishLoop Portfolio — Ready', 'color:#ff7a00;font-weight:700;font-size:14px;');
+  console.log('%c✦ AshishLoop — Ready', 'color:#ff7a00;font-weight:700;font-size:14px;');
 }
 
 if (document.readyState === 'loading') {
