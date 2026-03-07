@@ -3,9 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AshishLoop portfolio</title>
+  <title>AshishLoop — Video Editor Portfolio</title>
+
+  <!-- FIX: preconnect to CDN so DNS is resolved early -->
+  <link rel="preconnect" href="https://Aashishloop.b-cdn.net" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <!-- FIX: EmailJS loaded with defer — doesn't block page render -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -29,6 +37,7 @@
     </div>
   </nav>
 
+  <!-- ══════════ HERO ══════════ -->
   <section class="hero" id="home">
     <div class="hero-container">
       <h1 class="hero-headline">
@@ -42,16 +51,18 @@
       </p>
       <div class="hero-cta">
         <a href="#shorts"  class="btn-primary">View Work</a>
-        <a href="#contact" class="btn-outlined">Get Started</a>
+        <a href="#contact" class="btn-outlined"><span>Get Started</span></a>
       </div>
+
+      <!-- Hero intro video — this one loads normally (above the fold) -->
       <div class="hero-video-wrapper">
         <div class="hero-video-box">
-          <video class="hero-video" controls preload="auto" playsinline>
+          <video class="hero-video" controls preload="metadata" playsinline>
             <source src="https://Aashishloop.b-cdn.net/Aashishloop/asset/ashishloop%20intro.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
           </video>
         </div>
       </div>
+
       <div class="social-proof">
         <div class="avatar-row">
           <div class="avatar av-1"></div>
@@ -65,14 +76,17 @@
     </div>
     <div class="hero-bg-blur blur-1"></div>
     <div class="hero-bg-blur blur-2"></div>
-    <div class="hero-bg-blur blur-3"></div>
+    <!-- FIX: removed blur-3 — 3 blurs = too heavy -->
   </section>
 
+  <!-- ══════════ ABOUT ══════════ -->
   <section class="about-section" id="about">
     <div class="about-container">
       <div class="about-image-col">
         <div class="about-image">
-          <img src="https://Aashishloop.b-cdn.net/Aashishloop/asset/freepik__man-in-clean-light-and-high-contract-orange-gradie__78297%20copy.png" alt="Aashish Kumar" loading="lazy" />
+          <!-- FIX: loading="lazy" on all below-fold images -->
+          <img src="https://Aashishloop.b-cdn.net/Aashishloop/asset/freepik__man-in-clean-light-and-high-contract-orange-gradie__78297%20copy.png"
+               alt="Aashish Kumar" loading="lazy" />
         </div>
       </div>
       <div class="about-text-col">
@@ -91,20 +105,30 @@
     </div>
   </section>
 
+  <!-- ══════════ SHORT VIDEOS ══════════ -->
+  <!--
+    FIX: ALL <source> tags use data-src instead of src.
+    The LazyVideoModule in script.js will swap data-src → src
+    only when each card scrolls into view.
+    This means the browser does NOT start downloading 13 videos at page load.
+  -->
   <section class="shorts-section" id="shorts">
     <div class="section-container">
       <div class="section-header">
         <h2 class="section-title">Short <span class="accent">Videos</span></h2>
       </div>
       <div class="filter-controls">
-        <button class="filter-btn active" data-filter="all">All Projects</button>
+        <button class="filter-btn active" data-filter="all"><span>All Projects</span></button>
+        <button class="filter-btn" data-filter="reels"><span>Reels</span></button>
+        <button class="filter-btn" data-filter="cinematic"><span>Cinematic</span></button>
+        <button class="filter-btn" data-filter="ads"><span>Ads</span></button>
       </div>
       <div class="shorts-grid">
 
         <div class="video-card" data-category="reels">
           <div class="video-wrap">
-            <video preload="metadata" playsinline muted>
-              <source src="https://Aashishloop.b-cdn.net/Aashishloop/asset/CAPTION%20edit%20%28AshishLoop%29-.mp4" type="video/mp4" />
+            <video preload="none" playsinline muted>
+              <source data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/CAPTION%20edit%20%28AshishLoop%29-.mp4" type="video/mp4" />
             </video>
             <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
           </div>
@@ -112,8 +136,8 @@
 
         <div class="video-card" data-category="cinematic">
           <div class="video-wrap">
-            <video preload="metadata" playsinline muted>
-              <source src="https://Aashishloop.b-cdn.net/Aashishloop/asset/Deep%20in%20southern%20Egypt%20and%20northern%20Sudan_%20the%20Nubian%20villages%20offer%20a%20unique%20blend%20of%20ancient%20traditions%20and%20stunning%20landscapes.%20The%20Nubians_%20one%20of%20the%20_1.mp4" type="video/mp4" />
+            <video preload="none" playsinline muted>
+              <source data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/Deep%20in%20southern%20Egypt%20and%20northern%20Sudan_%20the%20Nubian%20villages%20offer%20a%20unique%20blend%20of%20ancient%20traditions%20and%20stunning%20landscapes.%20The%20Nubians_%20one%20of%20the%20_1.mp4" type="video/mp4" />
             </video>
             <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
           </div>
@@ -121,8 +145,8 @@
 
         <div class="video-card" data-category="reels">
           <div class="video-wrap">
-            <video preload="metadata" playsinline muted>
-              <source src="https://Aashishloop.b-cdn.net/Aashishloop/asset/kv%201.mp4" type="video/mp4" />
+            <video preload="none" playsinline muted>
+              <source data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/kv%201.mp4" type="video/mp4" />
             </video>
             <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
           </div>
@@ -130,8 +154,8 @@
 
         <div class="video-card" data-category="ads">
           <div class="video-wrap">
-            <video preload="metadata" playsinline muted>
-              <source src="https://Aashishloop.b-cdn.net/Aashishloop/asset/Ashishxsoon.mp4" type="video/mp4" />
+            <video preload="none" playsinline muted>
+              <source data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/Ashishxsoon.mp4" type="video/mp4" />
             </video>
             <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
           </div>
@@ -139,8 +163,8 @@
 
         <div class="video-card" data-category="reels">
           <div class="video-wrap">
-            <video preload="metadata" playsinline muted>
-              <source src="https://Aashishloop.b-cdn.net/Aashishloop/asset/luma%20ai%20v2.mp4" type="video/mp4" />
+            <video preload="none" playsinline muted>
+              <source data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/luma%20ai%20v2.mp4" type="video/mp4" />
             </video>
             <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
           </div>
@@ -148,8 +172,8 @@
 
         <div class="video-card" data-category="cinematic">
           <div class="video-wrap">
-            <video preload="metadata" playsinline muted>
-              <source src="https://Aashishloop.b-cdn.net/Aashishloop/asset/Connect%20Machine.mp4" type="video/mp4" />
+            <video preload="none" playsinline muted>
+              <source data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/Connect%20Machine.mp4" type="video/mp4" />
             </video>
             <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
           </div>
@@ -157,8 +181,8 @@
 
         <div class="video-card" data-category="ads">
           <div class="video-wrap">
-            <video preload="metadata" playsinline muted>
-              <source src="https://Aashishloop.b-cdn.net/Aashishloop/asset/I%20genuinely%20thought%20I%20had%20self-control_%20until%20I%20entered%20Chatuchak%20%F0%9F%98%82_There_s%20food_%20fashion_%20and%20vibe%20overload%20_%20it_s%20chaotic%20but%20addictive__Planning%20a%20Ban%28.mp4" type="video/mp4" />
+            <video preload="none" playsinline muted>
+              <source data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/I%20genuinely%20thought%20I%20had%20self-control_%20until%20I%20entered%20Chatuchak%20%F0%9F%98%82_There_s%20food_%20fashion_%20and%20vibe%20overload%20_%20it_s%20chaotic%20but%20addictive__Planning%20a%20Ban%28.mp4" type="video/mp4" />
             </video>
             <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
           </div>
@@ -166,8 +190,8 @@
 
         <div class="video-card" data-category="reels">
           <div class="video-wrap">
-            <video preload="metadata" playsinline muted>
-              <source src="https://Aashishloop.b-cdn.net/Aashishloop/asset/KEyFrames.mp4" type="video/mp4" />
+            <video preload="none" playsinline muted>
+              <source data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/KEyFrames.mp4" type="video/mp4" />
             </video>
             <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
           </div>
@@ -175,8 +199,8 @@
 
         <div class="video-card" data-category="cinematic">
           <div class="video-wrap">
-            <video preload="metadata" playsinline muted>
-              <source src="https://Aashishloop.b-cdn.net/Aashishloop/asset/KV%20v3.mp4" type="video/mp4" />
+            <video preload="none" playsinline muted>
+              <source data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/KV%20v3.mp4" type="video/mp4" />
             </video>
             <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
           </div>
@@ -184,8 +208,8 @@
 
         <div class="video-card" data-category="ads">
           <div class="video-wrap">
-            <video preload="metadata" playsinline muted>
-              <source src="https://Aashishloop.b-cdn.net/Aashishloop/asset/sample.mp4" type="video/mp4" />
+            <video preload="none" playsinline muted>
+              <source data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/sample.mp4" type="video/mp4" />
             </video>
             <div class="play-overlay"><div class="play-icon"><i class="fa-solid fa-play"></i></div></div>
           </div>
@@ -195,6 +219,7 @@
     </div>
   </section>
 
+  <!-- ══════════ INSTAGRAM POSTERS ══════════ -->
   <section class="instagram-section" id="instagram">
     <div class="section-container">
       <div class="section-header">
@@ -214,6 +239,7 @@
     </div>
   </section>
 
+  <!-- ══════════ LONG VIDEOS ══════════ -->
   <section class="long-section" id="long">
     <div class="section-container">
       <div class="section-header">
@@ -224,8 +250,8 @@
 
         <div class="long-card">
           <div class="long-wrap">
-            <video preload="metadata" playsinline muted>
-              <source src="https://Aashishloop.b-cdn.net/Aashishloop/asset/POrtfolio.mp4" type="video/mp4" />
+            <video preload="none" playsinline muted>
+              <source data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/POrtfolio.mp4" type="video/mp4" />
             </video>
             <div class="play-overlay dark"><div class="play-icon large"><i class="fa-solid fa-play"></i></div></div>
           </div>
@@ -233,8 +259,8 @@
 
         <div class="long-card">
           <div class="long-wrap">
-            <video preload="metadata" playsinline muted>
-              <source src="https://Aashishloop.b-cdn.net/Aashishloop/asset/YTDown.com_YouTube_How-to-USE-conflicts-to-get-closer-to-yo_Media_J10kNh48luo_002_720p.mp4" type="video/mp4" />
+            <video preload="none" playsinline muted>
+              <source data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/YTDown.com_YouTube_How-to-USE-conflicts-to-get-closer-to-yo_Media_J10kNh48luo_002_720p.mp4" type="video/mp4" />
             </video>
             <div class="play-overlay dark"><div class="play-icon large"><i class="fa-solid fa-play"></i></div></div>
           </div>
@@ -242,8 +268,8 @@
 
         <div class="long-card">
           <div class="long-wrap">
-            <video preload="metadata" playsinline muted>
-              <source src="https://Aashishloop.b-cdn.net/Aashishloop/asset/YTDown.com_YouTube_What-you-missed-Artlist-NYC-event-highli_Media_g3QZNrsVal0_002_720p.mp4" type="video/mp4" />
+            <video preload="none" playsinline muted>
+              <source data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/YTDown.com_YouTube_What-you-missed-Artlist-NYC-event-highli_Media_g3QZNrsVal0_002_720p.mp4" type="video/mp4" />
             </video>
             <div class="play-overlay dark"><div class="play-icon large"><i class="fa-solid fa-play"></i></div></div>
           </div>
@@ -253,6 +279,7 @@
     </div>
   </section>
 
+  <!-- ══════════ PICKER ══════════ -->
   <section class="picker-section" id="hire">
     <div class="picker-container">
       <div class="picker-header">
@@ -265,7 +292,7 @@
           <div class="picker-icon-wrap"><i class="fa-brands fa-tiktok"></i></div>
           <div class="picker-info"><h3>Short Form</h3><p>Reels, TikToks & YouTube Shorts — hook in 3 seconds, retain till the end</p></div>
           <div class="picker-tags"><span>Reels</span><span>TikTok</span><span>Shorts</span></div>
-          <div class="picker-cta-row"><a href="https://wa.me/917857929633?text=Hi%20Aashish!%20I%20want%20Short%20Form%20videos%20edited." target="_blank" class="picker-btn">Get Started →</a></div>
+          <div class="picker-cta-row"><a href="https://wa.me/917857929633?text=Hi%20Aashish!%20I%20want%20Short%20Form%20videos%20edited." target="_blank" rel="noopener" class="picker-btn">Get Started →</a></div>
           <div class="picker-glow"></div>
         </div>
         <div class="picker-card featured" data-type="long">
@@ -273,21 +300,21 @@
           <div class="picker-icon-wrap"><i class="fa-brands fa-youtube"></i></div>
           <div class="picker-info"><h3>Long Form</h3><p>YouTube videos with cinematic cuts, pacing & storytelling that keeps viewers watching</p></div>
           <div class="picker-tags"><span>YouTube</span><span>Documentary</span><span>Vlog</span></div>
-          <div class="picker-cta-row"><a href="https://wa.me/917857929633?text=Hi%20Aashish!%20I%20want%20Long%20Form%20YouTube%20videos%20edited." target="_blank" class="picker-btn">Get Started →</a></div>
+          <div class="picker-cta-row"><a href="https://wa.me/917857929633?text=Hi%20Aashish!%20I%20want%20Long%20Form%20YouTube%20videos%20edited." target="_blank" rel="noopener" class="picker-btn">Get Started →</a></div>
           <div class="picker-glow"></div>
         </div>
         <div class="picker-card" data-type="instagram">
           <div class="picker-icon-wrap"><i class="fa-brands fa-instagram"></i></div>
           <div class="picker-info"><h3>Instagram</h3><p>Feed videos, Carousels & Stories designed to stop the scroll and build brand</p></div>
           <div class="picker-tags"><span>Feed</span><span>Stories</span><span>Carousels</span></div>
-          <div class="picker-cta-row"><a href="https://wa.me/917857929633?text=Hi%20Aashish!%20I%20want%20Instagram%20content%20edited." target="_blank" class="picker-btn">Get Started →</a></div>
+          <div class="picker-cta-row"><a href="https://wa.me/917857929633?text=Hi%20Aashish!%20I%20want%20Instagram%20content%20edited." target="_blank" rel="noopener" class="picker-btn">Get Started →</a></div>
           <div class="picker-glow"></div>
         </div>
         <div class="picker-card" data-type="podcast">
           <div class="picker-icon-wrap"><i class="fa-solid fa-film"></i></div>
           <div class="picker-info"><h3>Podcast / Ad</h3><p>Podcast clips, brand ads & promos cut for maximum impact & shareability</p></div>
           <div class="picker-tags"><span>Podcast</span><span>Ads</span><span>Promo</span></div>
-          <div class="picker-cta-row"><a href="https://wa.me/917857929633?text=Hi%20Aashish!%20I%20want%20Podcast%2FAd%20content%20edited." target="_blank" class="picker-btn">Get Started →</a></div>
+          <div class="picker-cta-row"><a href="https://wa.me/917857929633?text=Hi%20Aashish!%20I%20want%20Podcast%2FAd%20content%20edited." target="_blank" rel="noopener" class="picker-btn">Get Started →</a></div>
           <div class="picker-glow"></div>
         </div>
       </div>
@@ -296,6 +323,7 @@
     <div class="picker-bg-orb orb-2"></div>
   </section>
 
+  <!-- ══════════ CONTACT ══════════ -->
   <section class="contact-section" id="contact">
     <div class="contact-container">
       <div class="contact-left">
@@ -303,23 +331,23 @@
         <h2 class="contact-title">Let's Create<br />Something That<br /><span class="converts">Converts.</span></h2>
         <p class="contact-desc">Got a project in mind? Fill the form or reach out directly — I respond within 24 hours.</p>
         <div class="social-icons-col">
-          <a href="https://www.instagram.com/aashishloop" target="_blank" rel="noopener" class="social-icon-card instagram">
+          <a href="https://www.instagram.com/aashishloop" target="_blank" rel="noopener" class="social-icon-card">
             <div class="icon-wrapper"><i class="fa-brands fa-instagram"></i></div>
             <span class="icon-label">Instagram</span>
           </a>
-          <a href="https://www.facebook.com/share/1CiHwccojb/" target="_blank" rel="noopener" class="social-icon-card facebook">
+          <a href="https://www.facebook.com/share/1CiHwccojb/" target="_blank" rel="noopener" class="social-icon-card">
             <div class="icon-wrapper"><i class="fa-brands fa-facebook-f"></i></div>
             <span class="icon-label">Facebook</span>
           </a>
-          <a href="https://wa.me/917857929633" target="_blank" rel="noopener" class="social-icon-card whatsapp">
+          <a href="https://wa.me/917857929633" target="_blank" rel="noopener" class="social-icon-card">
             <div class="icon-wrapper"><i class="fa-brands fa-whatsapp"></i></div>
             <span class="icon-label">WhatsApp</span>
           </a>
-          <a href="https://www.linkedin.com/in/ashish-loop-6404203b1" target="_blank" rel="noopener" class="social-icon-card linkedin">
+          <a href="https://www.linkedin.com/in/ashish-loop-6404203b1" target="_blank" rel="noopener" class="social-icon-card">
             <div class="icon-wrapper"><i class="fa-brands fa-linkedin-in"></i></div>
             <span class="icon-label">LinkedIn</span>
           </a>
-          <a href="mailto:workwithashishloop@gmail.com" class="social-icon-card email">
+          <a href="mailto:workwithashishloop@gmail.com" class="social-icon-card">
             <div class="icon-wrapper"><i class="fa-solid fa-envelope"></i></div>
             <span class="icon-label">Email</span>
           </a>
@@ -333,7 +361,7 @@
             <p class="hidden-honeypot" aria-hidden="true"><label><input name="bot-field" /></label></p>
             <div class="form-row">
               <div class="form-group">
-                <input type="text"  id="name"  name="name"  placeholder="Your Name"  required autocomplete="name"  />
+                <input type="text"  id="name"  name="name"  placeholder="Your Name"  required autocomplete="name" />
                 <span class="input-line"></span>
               </div>
               <div class="form-group">
@@ -342,7 +370,7 @@
               </div>
             </div>
             <div class="form-group">
-              <select id="videoType" name="videoType" class="form-select">
+              <select id="videoType" name="videoType">
                 <option value="" disabled selected>What type of video? (optional)</option>
                 <option value="short">Short Form — Reels / TikTok / Shorts</option>
                 <option value="long">Long Form — YouTube</option>
@@ -371,10 +399,9 @@
         </div>
       </div>
     </div>
-    <div class="contact-bg-gradient grad-1"></div>
-    <div class="contact-bg-gradient grad-2"></div>
   </section>
 
+  <!-- ══════════ VIDEO MODAL ══════════ -->
   <div class="video-modal" id="videoModal" role="dialog" aria-modal="true" aria-label="Video player">
     <div class="modal-backdrop" id="modalBackdrop"></div>
     <div class="modal-content" id="modalContent">
