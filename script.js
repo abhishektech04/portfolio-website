@@ -34,7 +34,6 @@ const ProgressModule = (() => {
   return {
     init() {
       window.addEventListener('scroll', () => {
-        /* FIX: requestAnimationFrame throttle — don't run on every scroll pixel */
         if (!ticking) { requestAnimationFrame(upd); ticking = true; }
       }, { passive: true });
       upd();
@@ -109,7 +108,6 @@ const RevealModule = (() => {
       en.target.style.transform = 'translateY(0)';
       obs.unobserve(en.target);
     });
-  /* FIX: higher threshold + bigger rootMargin = cards only animate when actually visible */
   }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
   function prep(el, i, delay) {
@@ -129,13 +127,10 @@ const RevealModule = (() => {
 })();
 
 /* ════════════════════════════════════════════════════════
-   4. LAZY VIDEO LOADER  ← THE MAIN FIX FOR LAG
-   Videos do NOT load until they scroll into view.
-   Only the src is inserted when the card enters viewport.
+   4. LAZY VIDEO LOADER (short + long video cards)
+   Swaps data-src → src only when card enters viewport.
 ════════════════════════════════════════════════════════ */
 const LazyVideoModule = (() => {
-
-  /* FIX: Only load video when card enters viewport + 200px buffer */
   const videoObs = new IntersectionObserver((entries) => {
     entries.forEach(en => {
       if (!en.isIntersecting) return;
@@ -144,26 +139,21 @@ const LazyVideoModule = (() => {
 
       const source = video.querySelector('source');
       if (source && source.dataset.src) {
-        source.src = source.dataset.src;   /* swap data-src → src */
+        source.src = source.dataset.src;
         video.load();
         video.dataset.loaded = 'true';
       }
       videoObs.unobserve(en.target);
     });
-  }, {
-    rootMargin: '200px 0px',   /* start loading 200px before entering screen */
-    threshold: 0
-  });
+  }, { rootMargin: '200px 0px', threshold: 0 });
 
   return {
     init() {
-      /* Convert all short + long video cards to lazy */
       $$('.video-card, .long-card').forEach(card => {
         const video  = card.querySelector('video');
         const source = video?.querySelector('source');
         if (!source) return;
 
-        /* Move src → data-src so browser won't auto-load */
         if (source.getAttribute('src') && !source.dataset.src) {
           source.dataset.src = source.getAttribute('src');
           source.removeAttribute('src');
@@ -206,7 +196,8 @@ const FilterModule = (() => {
 })();
 
 /* ════════════════════════════════════════════════════════
-   6. VIDEO MODAL
+   6. VIDEO MODAL (short + long cards only)
+   Instagram cards are <a> tags — they navigate directly.
 ════════════════════════════════════════════════════════ */
 const VideoModal = (() => {
   const modal    = $('#videoModal');
@@ -218,7 +209,6 @@ const VideoModal = (() => {
   function getSrc(card) {
     const vid = card.querySelector('video');
     if (vid) {
-      /* Check data-src first (lazy), then src */
       const source = vid.querySelector('source');
       const src = source?.dataset.src || source?.getAttribute('src') || vid.getAttribute('src') || '';
       if (src && !src.startsWith('http') && !src.startsWith('blob')) {
@@ -237,7 +227,6 @@ const VideoModal = (() => {
     modal.offsetHeight;
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-    /* FIX: longer delay — give browser time to buffer before playing */
     setTimeout(() => videoEl.play().catch(() => {}), 400);
   }
 
@@ -251,6 +240,7 @@ const VideoModal = (() => {
 
   return {
     init() {
+      /* Only attach modal to .video-card and .long-card — NOT .ig-item */
       $$('.video-card, .long-card').forEach(card => {
         card.style.cursor = 'pointer';
         card.addEventListener('click', () => open(getSrc(card)));
@@ -263,7 +253,66 @@ const VideoModal = (() => {
 })();
 
 /* ════════════════════════════════════════════════════════
-   7. CONTACT FORM
+   7. INSTAGRAM FEED MODULE
+   · Videos lazy-loaded from BunnyCDN via data-src
+   · Hover → plays muted preview loop
+   · mouseleave → pauses + resets
+   · Click → navigates to Instagram (native <a> href)
+     No modal, no lightbox — straight to IG.
+════════════════════════════════════════════════════════ */
+const IgFeedModule = (() => {
+
+  /* Lazy loader for IG items — same pattern as LazyVideoModule */
+  const igObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const item = entry.target;
+      const vid  = item.querySelector('video');
+      if (!vid || vid.dataset.loaded) return;
+
+      const src = item.dataset.src;
+      if (!src) return;
+
+      vid.src            = src;
+      vid.dataset.loaded = 'true';
+      vid.load();
+
+      /* fade video in once it can play */
+      vid.addEventListener('canplay', () => item.classList.add('vid-ready'), { once: true });
+      igObs.unobserve(item);
+    });
+  }, { rootMargin: '200px 0px', threshold: 0 });
+
+  return {
+    init() {
+      $$('.ig-item').forEach(item => {
+        const vid = item.querySelector('video');
+
+        /* register for lazy loading */
+        igObs.observe(item);
+
+        /* ── Desktop hover: play muted preview ── */
+        item.addEventListener('mouseenter', () => {
+          if (vid && vid.src) vid.play().catch(() => {});
+        });
+        item.addEventListener('mouseleave', () => {
+          if (vid) { vid.pause(); vid.currentTime = 0; }
+        });
+
+        /*
+         * Click behaviour:
+         * Each .ig-item is an <a href="https://www.instagram.com/ashishloop">
+         * so the browser handles the navigation natively.
+         * We just make sure the video doesn't intercept the event.
+         */
+        if (vid) vid.addEventListener('click', e => e.stopPropagation());
+      });
+    }
+  };
+})();
+
+/* ════════════════════════════════════════════════════════
+   8. CONTACT FORM
 ════════════════════════════════════════════════════════ */
 const FormModule = (() => {
   const form      = $('#contactForm');
@@ -308,12 +357,19 @@ const FormModule = (() => {
 
   async function sendEmail() {
     if (typeof emailjs === 'undefined') throw new Error('EmailJS not loaded');
+
+    /* ── Variable names must match your EmailJS template exactly ──
+       Template uses: {{title}}  {{name}}  {{time}}  {{message}}
+    ── */
+    const videoType = form.elements['videoType']?.value || '';
     const params = {
-      from_name:  form.elements['name']?.value?.trim()    || '',
-      from_email: form.elements['email']?.value?.trim()   || '',
-      video_type: form.elements['videoType']?.value       || 'Not specified',
-      message:    form.elements['message']?.value?.trim() || '',
-      reply_to:   form.elements['email']?.value?.trim()   || '',
+      title:   videoType ? `Video Type: ${videoType}` : 'Portfolio Inquiry',  /* {{title}} */
+      name:    form.elements['name']?.value?.trim()    || '',                 /* {{name}}  */
+      time:    new Date().toLocaleString('en-IN', {                           /* {{time}}  */
+                 dateStyle: 'medium', timeStyle: 'short'
+               }),
+      message: form.elements['message']?.value?.trim() || '',                /* {{message}} */
+      reply_to: form.elements['email']?.value?.trim()  || '',                /* keeps reply-to header */
     };
     const res = await emailjs.send(EMAILJS_SVC, EMAILJS_TPL, params, EMAILJS_PUBKEY);
     if (res.status !== 200) throw new Error('Status ' + res.status);
@@ -368,7 +424,7 @@ const FormModule = (() => {
 })();
 
 /* ════════════════════════════════════════════════════════
-   8. SMOOTH SCROLL
+   9. SMOOTH SCROLL
 ════════════════════════════════════════════════════════ */
 function initSmoothScroll() {
   $$('a[href^="#"]').forEach(a => {
@@ -387,8 +443,8 @@ function initSmoothScroll() {
 function init() {
   ProgressModule.init();
   NavbarModule.init();
-  /* FIX: LazyVideoModule BEFORE RevealModule — set up data-src first */
-  LazyVideoModule.init();
+  LazyVideoModule.init();   /* short/long cards */
+  IgFeedModule.init();      /* instagram feed cards */
   RevealModule.init();
   FilterModule.init();
   VideoModal.init();
