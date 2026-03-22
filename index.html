@@ -5,13 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AshishLoop — Video Editor Portfolio</title>
 
-  <!-- FIX: preconnect to CDN so DNS is resolved early -->
   <link rel="preconnect" href="https://Aashishloop.b-cdn.net" />
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-  <!-- FIX: EmailJS loaded with defer — doesn't block page render -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
 
   <link rel="stylesheet" href="style.css" />
@@ -27,7 +24,8 @@
         <a href="#home"      class="nav-link active">Home</a>
         <a href="#about"     class="nav-link">About</a>
         <a href="#shorts"    class="nav-link">Short Videos</a>
-        <a href="#instagram" class="nav-link">Instagram Posters</a>
+        <a href="#ig-feed"   class="nav-link">Instagram</a>
+        <a href="#instagram" class="nav-link">Posters</a>
         <a href="#long"      class="nav-link">Long Videos</a>
         <a href="#contact"   class="nav-link">Contact</a>
       </div>
@@ -54,7 +52,6 @@
         <a href="#contact" class="btn-outlined"><span>Get Started</span></a>
       </div>
 
-      <!-- Hero intro video — this one loads normally (above the fold) -->
       <div class="hero-video-wrapper">
         <div class="hero-video-box">
           <video class="hero-video" controls preload="metadata" playsinline>
@@ -76,7 +73,6 @@
     </div>
     <div class="hero-bg-blur blur-1"></div>
     <div class="hero-bg-blur blur-2"></div>
-    <!-- FIX: removed blur-3 — 3 blurs = too heavy -->
   </section>
 
   <!-- ══════════ ABOUT ══════════ -->
@@ -84,7 +80,6 @@
     <div class="about-container">
       <div class="about-image-col">
         <div class="about-image">
-          <!-- FIX: loading="lazy" on all below-fold images -->
           <img src="https://Aashishloop.b-cdn.net/Aashishloop/asset/freepik__man-in-clean-light-and-high-contract-orange-gradie__78297%20copy.png"
                alt="Aashish Kumar" loading="lazy" />
         </div>
@@ -106,12 +101,6 @@
   </section>
 
   <!-- ══════════ SHORT VIDEOS ══════════ -->
-  <!--
-    FIX: ALL <source> tags use data-src instead of src.
-    The LazyVideoModule in script.js will swap data-src → src
-    only when each card scrolls into view.
-    This means the browser does NOT start downloading 13 videos at page load.
-  -->
   <section class="shorts-section" id="shorts">
     <div class="section-container">
       <div class="section-header">
@@ -121,8 +110,8 @@
         <button class="filter-btn active" data-filter="all"><span>All Projects</span></button>
         <!-- <button class="filter-btn" data-filter="reels"><span>Reels</span></button>
         <button class="filter-btn" data-filter="cinematic"><span>Cinematic</span></button>
-        <button class="filter-btn" data-filter="ads"><span>Ads</span></button> -->
-      </div>
+        <button class="filter-btn" data-filter="ads"><span>Ads</span></button>
+      </div> -->
       <div class="shorts-grid">
 
         <div class="video-card" data-category="reels">
@@ -219,12 +208,185 @@
     </div>
   </section>
 
+  <!-- ══════════════════════════════════════════════════════
+       INSTAGRAM FEED SECTION
+       · Videos served via BunnyCDN
+       · Hover previews the video
+       · Any click opens Instagram directly in a new tab
+  ══════════════════════════════════════════════════════ -->
+  <section class="ig-section" id="ig-feed">
+    <div class="ig-container">
+
+      <span class="ig-label">// Follow Along</span>
+      <h2 class="ig-heading">Instagram <span class="ig-accent">Feed</span></h2>
+      <p class="ig-sub">
+        Hover to preview · Click any video to watch on <span class="ig-accent">@ashishloop</span>
+      </p>
+
+      <div class="ig-card">
+
+        <!-- Profile sidebar -->
+        <div class="ig-profile">
+          <a href="https://www.instagram.com/aashishloop"
+             target="_blank" rel="noopener"
+             class="ig-avatar-link"
+             aria-label="Visit @ashishloop on Instagram">
+            <div class="ig-avatar">
+              <div class="ig-avatar__ring"></div>
+              <div class="ig-avatar__inner">AK</div>
+            </div>
+          </a>
+
+          <div class="ig-handle">@<span class="ig-accent">ashishloop</span></div>
+
+          <p class="ig-bio">
+            🎬 Creative Video Editor<br>
+            ✂️ Shorts · Reels · Long Form<br>
+            📍 India · Open to Collabs
+          </p>
+
+          <div class="ig-stats">
+            <div class="ig-stat">
+              <span class="ig-stat__n">48</span>
+              <span class="ig-stat__l">Posts</span>
+            </div>
+            <div class="ig-stat">
+              <span class="ig-stat__n">20.1K</span>
+              <span class="ig-stat__l">Followers</span>
+            </div>
+            <div class="ig-stat">
+              <span class="ig-stat__n">410</span>
+              <span class="ig-stat__l">Following</span>
+            </div>
+          </div>
+
+          <a href="https://www.instagram.com/aashishloop"
+             target="_blank" rel="noopener"
+             class="ig-follow-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/>
+            </svg>
+            Follow on Instagram
+          </a>
+        </div>
+
+        <!-- Feed grid
+             data-src  = BunnyCDN video (lazy loaded, hover preview)
+             data-ig   = Instagram URL this card opens on click
+             data-title = card label
+        -->
+        <div class="ig-feed" role="list">
+
+          <a class="ig-item" role="listitem" href="https://www.instagram.com/aashishloop" target="_blank" rel="noopener"
+             data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/CAPTION%20edit%20%28AshishLoop%29-.mp4"
+             data-title="Caption Edit ✦">
+            <video preload="none" muted loop playsinline></video>
+            <div class="ig-item__thumb"></div>
+            <div class="ig-item__overlay">
+              <div class="ig-item__play"><i class="fa-solid fa-play" aria-hidden="true"></i></div>
+              <div class="ig-item__footer">
+                <span class="ig-item__tag">Short</span>
+                <span class="ig-item__hint"><i class="fa-brands fa-instagram"></i> Open IG</span>
+              </div>
+            </div>
+          </a>
+
+          <a class="ig-item" role="listitem" href="https://www.instagram.com/aashishloop" target="_blank" rel="noopener"
+             data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/luma%20ai%20v2.mp4"
+             data-title="Luma AI Edit ✦">
+            <video preload="none" muted loop playsinline></video>
+            <div class="ig-item__thumb"></div>
+            <div class="ig-item__overlay">
+              <div class="ig-item__play"><i class="fa-solid fa-play" aria-hidden="true"></i></div>
+              <div class="ig-item__footer">
+                <span class="ig-item__tag">AI</span>
+                <span class="ig-item__hint"><i class="fa-brands fa-instagram"></i> Open IG</span>
+              </div>
+            </div>
+          </a>
+
+          <a class="ig-item" role="listitem" href="https://www.instagram.com/aashishloop" target="_blank" rel="noopener"
+             data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/KV%20v3.mp4"
+             data-title="KV v3 Edit ✦">
+            <video preload="none" muted loop playsinline></video>
+            <div class="ig-item__thumb"></div>
+            <div class="ig-item__overlay">
+              <div class="ig-item__play"><i class="fa-solid fa-play" aria-hidden="true"></i></div>
+              <div class="ig-item__footer">
+                <span class="ig-item__tag">Cinematic</span>
+                <span class="ig-item__hint"><i class="fa-brands fa-instagram"></i> Open IG</span>
+              </div>
+            </div>
+          </a>
+
+          <a class="ig-item" role="listitem" href="https://www.instagram.com/aashishloop" target="_blank" rel="noopener"
+             data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/KEyFrames.mp4"
+             data-title="Keyframes Edit ✦">
+            <video preload="none" muted loop playsinline></video>
+            <div class="ig-item__thumb"></div>
+            <div class="ig-item__overlay">
+              <div class="ig-item__play"><i class="fa-solid fa-play" aria-hidden="true"></i></div>
+              <div class="ig-item__footer">
+                <span class="ig-item__tag">Reel</span>
+                <span class="ig-item__hint"><i class="fa-brands fa-instagram"></i> Open IG</span>
+              </div>
+            </div>
+          </a>
+
+          <a class="ig-item" role="listitem" href="https://www.instagram.com/aashishloop" target="_blank" rel="noopener"
+             data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/kv%201.mp4"
+             data-title="KV Edit ✦">
+            <video preload="none" muted loop playsinline></video>
+            <div class="ig-item__thumb"></div>
+            <div class="ig-item__overlay">
+              <div class="ig-item__play"><i class="fa-solid fa-play" aria-hidden="true"></i></div>
+              <div class="ig-item__footer">
+                <span class="ig-item__tag">Reel</span>
+                <span class="ig-item__hint"><i class="fa-brands fa-instagram"></i> Open IG</span>
+              </div>
+            </div>
+          </a>
+
+          <a class="ig-item" role="listitem" href="https://www.instagram.com/aashishloop" target="_blank" rel="noopener"
+             data-src="https://Aashishloop.b-cdn.net/Aashishloop/asset/ashishloop%20intro.mp4"
+             data-title="AshishLoop Intro ✦">
+            <video preload="none" muted loop playsinline></video>
+            <div class="ig-item__thumb"></div>
+            <div class="ig-item__overlay">
+              <div class="ig-item__play"><i class="fa-solid fa-play" aria-hidden="true"></i></div>
+              <div class="ig-item__footer">
+                <span class="ig-item__tag">Intro</span>
+                <span class="ig-item__hint"><i class="fa-brands fa-instagram"></i> Open IG</span>
+              </div>
+            </div>
+          </a>
+
+        </div><!-- /ig-feed -->
+      </div><!-- /ig-card -->
+
+      <!-- CTA strip -->
+      <div class="ig-cta">
+        <p>Want to see more edits?</p>
+        <a href="https://www.instagram.com/aashishloop"
+           target="_blank" rel="noopener"
+           class="ig-cta__btn">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/>
+          </svg>
+          Visit @ashishloop
+          <span class="ig-cta__arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+    </div><!-- /ig-container -->
+  </section>
+
   <!-- ══════════ INSTAGRAM POSTERS ══════════ -->
   <section class="instagram-section" id="instagram">
     <div class="section-container">
       <div class="section-header">
         <span class="section-tag">Design</span>
-        <h2 class="section-title">Instagram <span class="accent">Posters</span></h2>
+        <h2 class="section-title">Instagram <span class="accent">Cover</span></h2>
       </div>
       <div class="instagram-grid">
         <div class="poster-card"><img src="https://Aashishloop.b-cdn.net/Aashishloop/asset/Thumbnail%20%28Adobe%29.png"      alt="Adobe"      loading="lazy" /><div class="poster-glow"></div></div>
@@ -243,11 +405,10 @@
   <section class="long-section" id="long">
     <div class="section-container">
       <div class="section-header">
-        <span class="section-tag">Cinematic</span>
+        <!-- <span class="section-tag">Cinematic</span> -->
         <h2 class="section-title">Long <span class="accent">Videos</span></h2>
       </div>
       <div class="long-grid">
-
         <div class="long-card">
           <div class="long-wrap">
             <video preload="none" playsinline muted>
@@ -256,7 +417,6 @@
             <div class="play-overlay dark"><div class="play-icon large"><i class="fa-solid fa-play"></i></div></div>
           </div>
         </div>
-
         <div class="long-card">
           <div class="long-wrap">
             <video preload="none" playsinline muted>
@@ -265,7 +425,6 @@
             <div class="play-overlay dark"><div class="play-icon large"><i class="fa-solid fa-play"></i></div></div>
           </div>
         </div>
-
         <div class="long-card">
           <div class="long-wrap">
             <video preload="none" playsinline muted>
@@ -274,7 +433,6 @@
             <div class="play-overlay dark"><div class="play-icon large"><i class="fa-solid fa-play"></i></div></div>
           </div>
         </div>
-
       </div>
     </div>
   </section>
@@ -401,7 +559,7 @@
     </div>
   </section>
 
-  <!-- ══════════ VIDEO MODAL ══════════ -->
+  <!-- Video modal for short/long cards only -->
   <div class="video-modal" id="videoModal" role="dialog" aria-modal="true" aria-label="Video player">
     <div class="modal-backdrop" id="modalBackdrop"></div>
     <div class="modal-content" id="modalContent">
