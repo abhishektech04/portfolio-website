@@ -3,8 +3,7 @@
 const $  = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 
-// ✅ STORJ CDN — Bunny se replace kiya
-const CDN            = 'https://link.storjshare.io/s/jxtvmbrqo4udgxmtrft4qu4lbhka/ashishloop';
+const CDN            = 'https://link.storjshare.io/raw/jwm7j6drqwqewtw7ubjyfga3gwmq/ashishloop';
 const EMAILJS_SVC    = 'service_ozpzz2g';
 const EMAILJS_TPL    = 'template_0z73lc9';
 const EMAILJS_PUBKEY = 'sGzb8PkOTicnGEIz2';
