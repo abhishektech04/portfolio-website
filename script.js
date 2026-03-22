@@ -3,7 +3,8 @@
 const $  = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 
-const CDN            = 'https://Aashishloop.b-cdn.net/Aashishloop/asset';
+// ✅ STORJ CDN — Bunny se replace kiya
+const CDN            = 'https://link.storjshare.io/s/jxtvmbrqo4udgxmtrft4qu4lbhka/ashishloop';
 const EMAILJS_SVC    = 'service_ozpzz2g';
 const EMAILJS_TPL    = 'template_0z73lc9';
 const EMAILJS_PUBKEY = 'sGzb8PkOTicnGEIz2';
@@ -18,9 +19,6 @@ const EMAILJS_PUBKEY = 'sGzb8PkOTicnGEIz2';
   }
 })();
 
-/* ════════════════════════════════════════════════════════
-   1. SCROLL PROGRESS
-════════════════════════════════════════════════════════ */
 const ProgressModule = (() => {
   const bar = $('#scrollProgress');
   if (!bar) return { init: () => {} };
@@ -41,9 +39,6 @@ const ProgressModule = (() => {
   };
 })();
 
-/* ════════════════════════════════════════════════════════
-   2. NAVBAR
-════════════════════════════════════════════════════════ */
 const NavbarModule = (() => {
   const nav      = $('#navbar');
   const toggle   = $('#navToggle');
@@ -97,9 +92,6 @@ const NavbarModule = (() => {
   };
 })();
 
-/* ════════════════════════════════════════════════════════
-   3. SCROLL REVEAL
-════════════════════════════════════════════════════════ */
 const RevealModule = (() => {
   const obs = new IntersectionObserver((entries) => {
     entries.forEach(en => {
@@ -126,10 +118,6 @@ const RevealModule = (() => {
   };
 })();
 
-/* ════════════════════════════════════════════════════════
-   4. LAZY VIDEO LOADER (short + long video cards)
-   Swaps data-src → src only when card enters viewport.
-════════════════════════════════════════════════════════ */
 const LazyVideoModule = (() => {
   const videoObs = new IntersectionObserver((entries) => {
     entries.forEach(en => {
@@ -142,6 +130,10 @@ const LazyVideoModule = (() => {
         source.src = source.dataset.src;
         video.load();
         video.dataset.loaded = 'true';
+      } else if (video.dataset.src) {
+        video.src = video.dataset.src;
+        video.load();
+        video.dataset.loaded = 'true';
       }
       videoObs.unobserve(en.target);
     });
@@ -151,12 +143,20 @@ const LazyVideoModule = (() => {
     init() {
       $$('.video-card, .long-card').forEach(card => {
         const video  = card.querySelector('video');
-        const source = video?.querySelector('source');
-        if (!source) return;
+        if (!video) return;
+        const source = video.querySelector('source');
 
-        if (source.getAttribute('src') && !source.dataset.src) {
-          source.dataset.src = source.getAttribute('src');
-          source.removeAttribute('src');
+        if (source) {
+          if (source.getAttribute('src') && !source.dataset.src) {
+            source.dataset.src = source.getAttribute('src');
+            source.removeAttribute('src');
+          }
+        } else {
+          const directSrc = video.getAttribute('src');
+          if (directSrc && !video.dataset.src) {
+            video.dataset.src = directSrc;
+            video.removeAttribute('src');
+          }
         }
 
         videoObs.observe(card);
@@ -165,9 +165,6 @@ const LazyVideoModule = (() => {
   };
 })();
 
-/* ════════════════════════════════════════════════════════
-   5. VIDEO FILTER
-════════════════════════════════════════════════════════ */
 const FilterModule = (() => {
   const btns  = $$('.filter-btn');
   const cards = $$('.video-card');
@@ -195,10 +192,6 @@ const FilterModule = (() => {
   };
 })();
 
-/* ════════════════════════════════════════════════════════
-   6. VIDEO MODAL (short + long cards only)
-   Instagram cards are <a> tags — they navigate directly.
-════════════════════════════════════════════════════════ */
 const VideoModal = (() => {
   const modal    = $('#videoModal');
   const videoEl  = $('#modalVideo');
@@ -210,11 +203,15 @@ const VideoModal = (() => {
     const vid = card.querySelector('video');
     if (vid) {
       const source = vid.querySelector('source');
-      const src = source?.dataset.src || source?.getAttribute('src') || vid.getAttribute('src') || '';
-      if (src && !src.startsWith('http') && !src.startsWith('blob')) {
-        return CDN + '/' + src.replace(/^\/+/, '');
-      }
-      return src;
+      const src = source?.dataset.src
+               || source?.getAttribute('src')
+               || vid.dataset.src
+               || vid.getAttribute('src')
+               || card.dataset.src
+               || '';
+      if (!src) return '';
+      if (src.startsWith('http') || src.startsWith('blob')) return src;
+      return CDN + '/' + src.replace(/^\/+/, '');
     }
     return card.dataset.src || '';
   }
@@ -240,7 +237,6 @@ const VideoModal = (() => {
 
   return {
     init() {
-      /* Only attach modal to .video-card and .long-card — NOT .ig-item */
       $$('.video-card, .long-card').forEach(card => {
         card.style.cursor = 'pointer';
         card.addEventListener('click', () => open(getSrc(card)));
@@ -252,17 +248,7 @@ const VideoModal = (() => {
   };
 })();
 
-/* ════════════════════════════════════════════════════════
-   7. INSTAGRAM FEED MODULE
-   · Videos lazy-loaded from BunnyCDN via data-src
-   · Hover → plays muted preview loop
-   · mouseleave → pauses + resets
-   · Click → navigates to Instagram (native <a> href)
-     No modal, no lightbox — straight to IG.
-════════════════════════════════════════════════════════ */
 const IgFeedModule = (() => {
-
-  /* Lazy loader for IG items — same pattern as LazyVideoModule */
   const igObs = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
@@ -277,7 +263,6 @@ const IgFeedModule = (() => {
       vid.dataset.loaded = 'true';
       vid.load();
 
-      /* fade video in once it can play */
       vid.addEventListener('canplay', () => item.classList.add('vid-ready'), { once: true });
       igObs.unobserve(item);
     });
@@ -287,33 +272,24 @@ const IgFeedModule = (() => {
     init() {
       $$('.ig-item').forEach(item => {
         const vid = item.querySelector('video');
-
-        /* register for lazy loading */
         igObs.observe(item);
 
-        /* ── Desktop hover: play muted preview ── */
         item.addEventListener('mouseenter', () => {
-          if (vid && vid.src) vid.play().catch(() => {});
+          if (vid && vid.src) {
+            if (!vid.muted) vid.muted = true;
+            vid.play().catch(() => {});
+          }
         });
         item.addEventListener('mouseleave', () => {
           if (vid) { vid.pause(); vid.currentTime = 0; }
         });
 
-        /*
-         * Click behaviour:
-         * Each .ig-item is an <a href="https://www.instagram.com/ashishloop">
-         * so the browser handles the navigation natively.
-         * We just make sure the video doesn't intercept the event.
-         */
         if (vid) vid.addEventListener('click', e => e.stopPropagation());
       });
     }
   };
 })();
 
-/* ════════════════════════════════════════════════════════
-   8. CONTACT FORM
-════════════════════════════════════════════════════════ */
 const FormModule = (() => {
   const form      = $('#contactForm');
   const submitBtn = $('#formSubmitBtn');
@@ -357,19 +333,13 @@ const FormModule = (() => {
 
   async function sendEmail() {
     if (typeof emailjs === 'undefined') throw new Error('EmailJS not loaded');
-
-    /* ── Variable names must match your EmailJS template exactly ──
-       Template uses: {{title}}  {{name}}  {{time}}  {{message}}
-    ── */
     const videoType = form.elements['videoType']?.value || '';
     const params = {
-      title:   videoType ? `Video Type: ${videoType}` : 'Portfolio Inquiry',  /* {{title}} */
-      name:    form.elements['name']?.value?.trim()    || '',                 /* {{name}}  */
-      time:    new Date().toLocaleString('en-IN', {                           /* {{time}}  */
-                 dateStyle: 'medium', timeStyle: 'short'
-               }),
-      message: form.elements['message']?.value?.trim() || '',                /* {{message}} */
-      reply_to: form.elements['email']?.value?.trim()  || '',                /* keeps reply-to header */
+      title:    videoType ? `Video Type: ${videoType}` : 'Portfolio Inquiry',
+      name:     form.elements['name']?.value?.trim()    || '',
+      time:     new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }),
+      message:  form.elements['message']?.value?.trim() || '',
+      reply_to: form.elements['email']?.value?.trim()   || '',
     };
     const res = await emailjs.send(EMAILJS_SVC, EMAILJS_TPL, params, EMAILJS_PUBKEY);
     if (res.status !== 200) throw new Error('Status ' + res.status);
@@ -423,9 +393,6 @@ const FormModule = (() => {
   };
 })();
 
-/* ════════════════════════════════════════════════════════
-   9. SMOOTH SCROLL
-════════════════════════════════════════════════════════ */
 function initSmoothScroll() {
   $$('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
@@ -437,14 +404,11 @@ function initSmoothScroll() {
   });
 }
 
-/* ════════════════════════════════════════════════════════
-   BOOT
-════════════════════════════════════════════════════════ */
 function init() {
   ProgressModule.init();
   NavbarModule.init();
-  LazyVideoModule.init();   /* short/long cards */
-  IgFeedModule.init();      /* instagram feed cards */
+  LazyVideoModule.init();
+  IgFeedModule.init();
   RevealModule.init();
   FilterModule.init();
   VideoModal.init();
