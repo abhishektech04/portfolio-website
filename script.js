@@ -3,8 +3,8 @@
 const $  = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 
-// ✅ CORRECT STORJ CDN URL
-const CDN            = 'https://link.storjshare.io/raw/jwpugstjuwnugsucltn24634mb4q/ashishloop';
+// ✅ BUNNY CDN
+const CDN            = 'https://aashishloop04.b-cdn.net';
 const EMAILJS_SVC    = 'service_ozpzz2g';
 const EMAILJS_TPL    = 'template_0z73lc9';
 const EMAILJS_PUBKEY = 'sGzb8PkOTicnGEIz2';
